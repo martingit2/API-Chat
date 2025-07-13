@@ -1,0 +1,46 @@
+/* src/components/markdown.css */
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content pre {
+  background: #282c34;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.markdown-content code:not(pre code) {
+  background: #40414f;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  color: #f8f8f2;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #10a37f;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: #acacbe;
+}
+
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.markdown-content th, .markdown-content td {
+  border: 1px solid #40414f;
+  padding: 0.5rem;
+}
+
+.markdown-content th {
+  background-color: #40414f;
+}
