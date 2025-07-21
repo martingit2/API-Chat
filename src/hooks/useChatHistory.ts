@@ -7,25 +7,6 @@ export function useChatHistory() {
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
 
-  // Last historikk ved oppstart
-  useEffect(() => {
-    const saved = localStorage.getItem('chatThreads');
-    if (saved) {
-      const parsed = JSON.parse(saved) as ChatThread[];
-      setThreads(parsed);
-      setCurrentThreadId(parsed[0]?.id || null);
-    } else {
-      createNewThread();
-    }
-  }, []);
-
-  // Lagre ved endringer
-  useEffect(() => {
-    if (threads.length > 0) {
-      localStorage.setItem('chatThreads', JSON.stringify(threads));
-    }
-  }, [threads]);
-
   const createNewThread = useCallback((model: AIModel = 'gpt-4-turbo') => {
     const newThread: ChatThread = {
       id: Date.now().toString(),
@@ -39,6 +20,23 @@ export function useChatHistory() {
     setThreads(prev => [newThread, ...prev]);
     setCurrentThreadId(newThread.id);
     return newThread;
+  }, [threads.length]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('chatThreads');
+    if (saved) {
+      const parsed = JSON.parse(saved) as ChatThread[];
+      setThreads(parsed);
+      setCurrentThreadId(parsed[0]?.id || null);
+    } else {
+      createNewThread();
+    }
+  }, [createNewThread]);
+
+  useEffect(() => {
+    if (threads.length > 0) {
+      localStorage.setItem('chatThreads', JSON.stringify(threads));
+    }
   }, [threads]);
 
   const currentThread = threads.find(t => t.id === currentThreadId) || createNewThread();
@@ -52,15 +50,28 @@ export function useChatHistory() {
       timestamp: Date.now()
     };
 
-    // Oppdater tråden med brukerens melding
     setThreads(prev => prev.map(thread => 
       thread.id === currentThreadId
         ? { ...thread, messages: [...thread.messages, userMessage] }
         : thread
     ));
 
-    // TODO: Implementer API-kall med streaming
+    // Implementer API-kall her
   };
 
-  return { threads, currentThread, createNewThread, sendMessage };
+  const setCurrentModel = (model: AIModel) => {
+    setThreads(prev => prev.map(thread => 
+      thread.id === currentThreadId
+        ? { ...thread, model }
+        : thread
+    ));
+  };
+
+  return { 
+    threads, 
+    currentThread, 
+    createNewThread, 
+    sendMessage,
+    setCurrentModel
+  };
 }
